@@ -209,7 +209,7 @@ class DumpViewerApp {
         
         switch (theme) {
             case 'light':
-                iconPath = '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 6.34L4.93 4.93M19.07 19.07l-1.41-1.41"/>';
+                iconPath = '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M19.07 4.93l-1.41 1.41M4.93 19.07l1.41-1.41"/>';
                 break;
             case 'dark':
                 iconPath = '<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>';
@@ -1300,7 +1300,6 @@ class DumpViewerApp {
                 oldScript.dataset.executed = '1'; 
                 return; 
             }
-            console.log('Script content (first 100 chars):', code.substring(0, 100));
             
             // Execute the script directly since Sfdump is already available
             runCode(code);
@@ -1442,7 +1441,7 @@ class DumpViewerApp {
         // This would be updated with the actual path from the server
         const phpHelperElement = document.getElementById('phpHelperPath');
         if (phpHelperElement) {
-            phpHelperElement.textContent = "require_once '/tmp/dump-viewer-helper.php';";
+            phpHelperElement.textContent = "require_once '/path/to/dumper/dumper.php';";
         }
     }
     

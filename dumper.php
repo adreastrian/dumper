@@ -47,3 +47,10 @@ $dumper = new ServerDumper('tcp://127.0.0.1:9912', $fallbackDumper, [
 VarDumper::setHandler(function ($var) use ($cloner, $dumper) {
     return $dumper->dump($cloner->cloneVar($var));
 });
+
+if (!function_exists('d')) {
+    function d(mixed ...$vars): mixed
+    {
+        return dump(...$vars);
+    }
+}

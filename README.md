@@ -28,7 +28,7 @@ A beautiful debugging tool that captures and displays PHP dump() output with a b
    require_once '/path/to/dumper/dumper.php';
 
    // Now you can use dump() anywhere
-   dump($variable);
+   d($variable);
    dd($data); // dump and die
    ```
 
