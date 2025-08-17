@@ -1,0 +1,20 @@
+{
+    "name": "dumper/dumper",
+    "description": "A beautiful debugging tool that captures and displays PHP dump() output with a beautiful interface.",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Dumper\\Dumper\\": "app/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Mahmudul Hasan",
+            "email": "mahmudulhasanarif@gmail.com"
+        }
+    ],
+    "require": {
+        "symfony/var-dumper": "^7.3",
+        "symfony/console": "^7.3"
+    }
+}

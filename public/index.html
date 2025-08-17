@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dump Viewer</title>
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🪲</text></svg>">
+</head>
+<body>
+    <div id="app">
+        <header class="header">
+            <div class="header-content">
+                <div class="header-left">
+                    <div class="app-logo">
+                        <span class="logo-icon">🪲</span>
+                        <h1 class="app-title">Dump Viewer</h1>
+                    </div>
+                    <div class="server-info" id="serverInfo">
+                        <span class="server-port">Port: 3000</span>
+                        <span class="dump-count">0 dumps</span>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <div class="connection-status" id="connectionStatus">
+                        <span class="status-indicator"></span>
+                        <span class="status-text">Connecting...</span>
+                        <button class="retry-btn" id="retryBtn" style="display: none;" title="Retry Connection">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M3 12a9 9 0 1 0 3-6"/>
+                                <path d="M3 5v5h5"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="header-actions">
+                        <div class="theme-selector">
+                            <button class="theme-btn" id="themeBtn" title="Theme">
+                                <svg class="icon theme-icon" id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+                                </svg>
+                            </button>
+                            <div class="theme-dropdown" id="themeDropdown">
+                                <div class="theme-option" data-theme="light">
+                                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="4"/>
+                                        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 6.34L4.93 4.93M19.07 19.07l-1.41-1.41"/>
+                                    </svg>
+                                    <span>Light</span>
+                                    <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="20,6 9,17 4,12"/>
+                                    </svg>
+                                </div>
+                                <div class="theme-option" data-theme="dark">
+                                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+                                    </svg>
+                                    <span>Dark</span>
+                                    <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="20,6 9,17 4,12"/>
+                                    </svg>
+                                </div>
+                                <div class="theme-option" data-theme="auto">
+                                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                                        <line x1="8" y1="21" x2="16" y2="21"/>
+                                        <line x1="12" y1="17" x2="12" y2="21"/>
+                                    </svg>
+                                    <span>System</span>
+                                    <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="20,6 9,17 4,12"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="header-btn" id="shortcutsBtn" title="Keyboard Shortcuts">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="6" width="18" height="12" rx="2"></rect>
+                                <path d="M6 10h1M9 10h1M12 10h1M15 10h1M18 10h1M6 13h3M10.5 13h3M15.5 13h2"></path>
+                            </svg>
+                        </button>
+                        <button class="header-btn" id="helpBtn" title="Help"><svg class="icon" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor"/><path d="M9.5 9a2.5 2.5 0 1 1 4.2 1.8c-.7.6-1.2 1-1.2 1.7v.5" stroke="currentColor"/><circle cx="12" cy="17" r="1" fill="currentColor"/></svg></button>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <main class="main-content">
+            <div class="sidebar">
+                <div class="sidebar-section" style="display: none;">
+                    <h3 class="sidebar-title">Filter by Category</h3>
+                    <div class="filter-tabs" id="filterTabs">
+                        <button class="tab active" data-filter="all">
+                            <span class="tab-icon"><span class="icon-swap" data-icon="clipboard"></span></span>
+                            <span class="tab-label">All</span>
+                            <span class="tab-count">(0)</span>
+                        </button>
+                        <button class="tab" data-filter="dumps">
+                            <span class="tab-icon"><span class="icon-swap" data-icon="search"></span></span>
+                            <span class="tab-label">Dumps</span>
+                            <span class="tab-count">(0)</span>
+                        </button>
+                        <button class="tab" data-filter="queries">
+                            <span class="tab-icon"><span class="icon-swap" data-icon="database"></span></span>
+                            <span class="tab-label">Queries</span>
+                            <span class="tab-count">(0)</span>
+                        </button>
+                        <button class="tab" data-filter="jobs">
+                            <span class="tab-icon"><span class="icon-swap" data-icon="bolt"></span></span>
+                            <span class="tab-label">Jobs</span>
+                            <span class="tab-count">(0)</span>
+                        </button>
+                        <button class="tab" data-filter="views">
+                            <span class="tab-icon"><span class="icon-swap" data-icon="eye"></span></span>
+                            <span class="tab-label">Views</span>
+                            <span class="tab-count">(0)</span>
+                        </button>
+                        <button class="tab" data-filter="requests">
+                            <span class="tab-icon"><span class="icon-swap" data-icon="globe"></span></span>
+                            <span class="tab-label">Requests</span>
+                            <span class="tab-count">(0)</span>
+                        </button>
+                        <button class="tab" data-filter="logs">
+                            <span class="tab-icon"><span class="icon-swap" data-icon="note"></span></span>
+                            <span class="tab-label">Logs</span>
+                            <span class="tab-count">(0)</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title">Actions</h3>
+                    <div class="actions">
+                        <button class="btn btn-clear" id="clearBtn">
+                            <span class="btn-icon"><span class="icon-swap" data-icon="trash"></span></span>
+                            Clear All
+                        </button>
+                        <!-- <div class="export-dropdown" style="display: none;">
+                            <button class="btn btn-export" id="exportBtn">
+                                <span class="btn-icon">📤</span>
+                                Export
+                                <span class="dropdown-arrow">▼</span>
+                            </button>
+                            <div class="export-menu" id="exportMenu">
+                                <button class="export-option" data-format="json">
+                                    <span class="option-icon"><span class="icon-swap" data-icon="file"></span></span>
+                                    Export as JSON
+                                </button>
+                                <button class="export-option" data-format="csv">
+                                    <span class="option-icon"><span class="icon-swap" data-icon="database"></span></span>
+                                    Export as CSV
+                                </button>
+                                <button class="export-option" data-format="html">
+                                    <span class="option-icon"><span class="icon-swap" data-icon="globe"></span></span>
+                                    Export as HTML
+                                </button>
+                                <button class="export-option" data-format="text">
+                                    <span class="option-icon"><span class="icon-swap" data-icon="note"></span></span>
+                                    Export as Text
+                                </button>
+                                <div class="export-separator"></div>
+                                <button class="export-option" data-format="selected">
+                                    <span class="option-icon"><span class="icon-swap" data-icon="check"></span></span>
+                                    Export Selected Only
+                                </button>
+                                <button class="export-option" data-format="filtered">
+                                    <span class="option-icon"><span class="icon-swap" data-icon="search"></span></span>
+                                    Export Filtered Results
+                                </button>
+                            </div>
+                        </div> -->
+                        <button class="btn btn-refresh" id="refreshBtn">
+                            <span class="btn-icon"><span class="icon-swap" data-icon="refresh"></span></span>
+                            Refresh
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="sidebar-section sidebar-footer">
+                    <div class="stats" id="sidebarStats">
+                        <div class="stat-item">
+                            <span class="stat-label">Memory:</span>
+                            <span class="stat-value" id="memoryUsage">0 KB</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Uptime:</span>
+                            <span class="stat-value" id="uptime">0s</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="content">
+                <div class="content-header">
+                    <div class="content-title">
+                        <h2 id="contentTitle">All Dumps</h2>
+                        <span class="content-subtitle" id="contentSubtitle">Real-time PHP debugging output</span>
+                    </div>
+                    <div class="content-actions">
+                        <div class="search-box">
+                            <input type="text" id="searchInput" placeholder="Search dumps..." class="search-input">
+                            <button class="search-btn" id="searchBtn">
+                                <svg class="icon" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor"/><path d="M20 20l-3.5-3.5" stroke="currentColor" stroke-linecap="round"/></svg>
+                            </button>
+                            <button class="search-clear-btn" id="searchClearBtn" style="display: none;">
+                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M18 6L6 18M6 6l12 12"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="dump-controls">
+                            <button class="control-btn" id="expandAllBtn" title="Expand All Dumps">
+                                <svg class="icon" viewBox="0 0 24 24" fill="none"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M21 16v5h-5M7 7l-4-4M17 7l4-4M7 17l-4 4M17 17l4 4" stroke="currentColor" stroke-linecap="round"/></svg>
+                            </button>
+                            <button class="control-btn" id="collapseAllBtn" title="Collapse All Dumps">
+                                <svg class="icon" viewBox="0 0 24 24" fill="none"><rect x="4" y="4" width="16" height="16" rx="3" stroke="currentColor"/><path d="M8 12h8" stroke="currentColor" stroke-linecap="round"/></svg>
+                            </button>
+                            <button class="control-btn" id="autoScrollBtn" title="Auto-scroll to New Dumps" data-active="true">
+                                <svg class="icon" viewBox="0 0 24 24" fill="none"><path d="M12 21s6-5.5 6-10a6 6 0 10-12 0c0 4.5 6 10 6 10z" stroke="currentColor"/><circle cx="12" cy="11" r="2" stroke="currentColor"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                
+                
+                <div class="dump-container">
+                    <div class="dump-list" id="dumpList">
+                        <div class="empty-state">
+                            <div class="empty-icon">🪲</div>
+                            <h3>No dumps yet</h3>
+                            <p>Start debugging your PHP application to see dumps here!</p>
+                            <div class="empty-actions">
+                                <button class="btn btn-primary" id="showInstructionsBtn">Show Setup Instructions</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            
+        </main>
+        
+        <!-- Keyboard Shortcuts Panel -->
+        <div class="shortcuts-panel" id="shortcutsPanel">
+            <div class="shortcuts-header">
+                <h4>Keyboard Shortcuts</h4>
+                <button class="shortcuts-close" id="shortcutsClose">×</button>
+            </div>
+            <div class="shortcuts-content">
+                <div class="shortcut-group">
+                    <h5>Navigation</h5>
+                    <div class="shortcut-item">
+                        <div class="keys"><kbd>⌘</kbd><span class="plus">+</span><kbd>K</kbd></div>
+                        <span>Focus Search</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <div class="keys"><kbd>⌘</kbd><span class="plus">+</span><kbd>U</kbd></div>
+                        <span>Refresh Dumps</span>
+                    </div>
+                </div>
+                <div class="shortcut-group">
+                    <h5>View Controls</h5>
+                    <div class="shortcut-item">
+                        <div class="keys"><kbd>⌘</kbd><span class="plus">+</span><kbd>+</kbd></div>
+                        <span>Expand All</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <div class="keys"><kbd>⌘</kbd><span class="plus">+</span><kbd>-</kbd></div>
+                        <span>Collapse All</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <div class="keys"><kbd>⌘</kbd><span class="plus">+</span><kbd>D</kbd></div>
+                        <span>Clear All Dumps</span>
+                    </div>
+                </div>
+                <div class="shortcut-group">
+                    <h5>Other</h5>
+                    <div class="shortcut-item">
+                        <div class="keys">
+                            <kbd>Esc</kbd>
+                        </div>
+                        <span>Close Modals</span>
+                    </div>
+
+                    <div class="shortcut-item">
+                        <div class="keys">
+                            <kbd>?</kbd>
+                        </div>
+                        <span>Show This Panel</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Modal -->
+        <div class="modal" id="settingsModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Settings</h3>
+                    <button class="modal-close" id="closeSettingsBtn">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="settings-section">
+                        <h4>Display Options</h4>
+                        <div class="setting-item">
+                            <label class="setting-label">
+                                <input type="checkbox" id="autoScrollSetting" checked>
+                                <span class="checkmark"></span>
+                                Auto-scroll to new dumps
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <label class="setting-label">
+                                <input type="checkbox" id="soundNotificationsSetting">
+                                <span class="checkmark"></span>
+                                Sound notifications
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <label class="setting-label">
+                                <input type="checkbox" id="compactModeSetting">
+                                <span class="checkmark"></span>
+                                Compact mode by default
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-section">
+                        <h4>Performance</h4>
+                        <div class="setting-item">
+                            <label class="setting-label">Max dumps to keep:</label>
+                            <select id="maxDumpsSetting" class="setting-select">
+                                <option value="100">100</option>
+                                <option value="500">500</option>
+                                <option value="1000" selected>1000</option>
+                                <option value="2000">2000</option>
+                            </select>
+                        </div>
+                        <div class="setting-item">
+                            <label class="setting-label">
+                                <input type="checkbox" id="autoCollapseSetting" checked>
+                                <span class="checkmark"></span>
+                                Auto-collapse large dumps
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-section">
+                        <h4>Theme</h4>
+                        <div class="setting-item">
+                            <label class="setting-label">Color scheme:</label>
+                            <select id="themeSetting" class="setting-select">
+                                <option value="dark" selected>Dark</option>
+                                <option value="light">Light</option>
+                                <option value="auto">Auto</option>
+                            </select>
+                        </div>
+                        <div class="setting-item">
+                            <label class="setting-label">Font size:</label>
+                            <select id="fontSizeSetting" class="setting-select">
+                                <option value="11">11px</option>
+                                <option value="12">12px</option>
+                                <option value="13" selected>13px</option>
+                                <option value="14">14px</option>
+                                <option value="15">15px</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" id="resetSettingsBtn">Reset to Defaults</button>
+                    <button class="btn btn-primary" id="saveSettingsBtn">Save Settings</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Setup Instructions Modal -->
+        <div class="modal" id="instructionsModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Setup Instructions</h3>
+                    <button class="modal-close" id="closeInstructionsBtn">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="instruction-step">
+                        <h4>1. Include the PHP helper in your project:</h4>
+                        <div class="code-block">
+                            <code id="phpHelperPath">require_once '/path/to/dump-viewer-helper.php';</code>
+                            <button class="copy-code-btn" onclick="copyToClipboard('phpHelperPath')"><span class="icon-swap" data-icon="copy"></span></button>
+                        </div>
+                    </div>
+                    <div class="instruction-step">
+                        <h4>2. Use dump functions in your PHP code:</h4>
+                        <div class="code-block">
+                            <code>dump($variable); // Dump and continue
+dd($data); // Dump and die</code>
+                        </div>
+                    </div>
+                    <div class="instruction-step">
+                        <h4>3. View dumps in real-time!</h4>
+                        <p>Dumps will appear here automatically as your PHP application runs.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="./Sfdump.js"></script>
+    <script src="./app.js"></script>
+</body>
+</html>
