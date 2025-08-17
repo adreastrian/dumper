@@ -395,54 +395,6 @@ class DumpViewerApp {
         });
     }
     
-    // Enhanced dump handling with settings
-    addDump(dumpData) {
-        // Add timestamp if not present
-        if (!dumpData.timestamp) {
-            dumpData.timestamp = new Date().toISOString();
-        }
-        
-        this.dumps.unshift(dumpData); // Add to beginning for newest-first order
-        
-        // Limit dumps based on settings
-        if (this.dumps.length > this.settings.maxDumps) {
-            this.dumps = this.dumps.slice(0, this.settings.maxDumps);
-            
-        }
-        
-        this.renderDumps();
-        this.updateTabCounts();
-        this.updateServerInfo();
-        
-        // Show notification for new dump
-        const fileName = dumpData.source.file.split('/').pop() || dumpData.source.file;
-        this.showNotification(`New ${dumpData.category} dump from ${fileName}:${dumpData.source.line}`);
-        
-        // Auto-scroll if enabled
-        if (this.settings.autoScroll) {
-            const dumpList = document.getElementById('dumpList');
-            if (dumpList.scrollTop < 100) {
-                dumpList.scrollTop = 0;
-            }
-        }
-        
-        // Flash the new dump briefly
-        setTimeout(() => {
-            const firstDump = document.querySelector('.dump-item');
-            if (firstDump) {
-                firstDump.classList.add('dump-new');
-                setTimeout(() => {
-                    firstDump.classList.remove('dump-new');
-                }, 2000);
-            }
-        }, 100);
-        
-        // Play sound if enabled
-        if (this.settings.soundNotifications) {
-            this.playNotificationSound();
-        }
-    }
-    
     // Filtering Methods (advanced removed)
     matchesCategoryFilter(dump) {
         return this.activeFilter === 'all' || dump.category === this.activeFilter;
@@ -1208,6 +1160,7 @@ class DumpViewerApp {
         this.dumps = [];
         this.renderDumps();
         this.updateTabCounts();
+        this.updateContentTitle(0);
     }
 
     renderDumps() {
